@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "bible-in-a-year"
+version = "0.1.0"
+description = "Bible in a Year Utilities"
+authors = ["Cuauhtemoc Hernandez <cuauhtemoc.amdg@gmail.com>"]
+license = "MIT License"
+readme = "README.md"
+packages = [{include = "bible_in_a_year"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+click = "^8.1.3"
+pandas = "^1.5.2"
+openpyxl = "^3.0.10"
+python-slugify = "^7.0.0"
+pytube = "^12.1.2"
+moviepy = "^1.0.3"
+prettytable = "^3.5.0"
+
+[tool.poetry.scripts]
+biy-cli = "bible_in_a_year.cli:cli"
+
+[tool.poetry.group.jupyter.dependencies]
+jupyter = "^1.0.0"
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
