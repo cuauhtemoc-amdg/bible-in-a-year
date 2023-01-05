@@ -20,6 +20,8 @@ from bible_in_a_year.biy_datafile import load_biy_df, save_biy_df
 from bible_in_a_year.biy_utils import open_yt_at_time, get_start_stop_list, get_reading_list, get_yt_url, biy_video_ext
 from bible_in_a_year.biy_paths import biy_mp3_path, bible_in_year_temp_path
 from bible_in_a_year.biy_segment import BIYSegment
+from bible_in_a_year.show import show_day_readings
+
 
 from moviepy.editor import VideoFileClip
 import contextlib
@@ -63,6 +65,7 @@ def cli_mp3(start_day: int, stop_day: int):
         msg.print(f'     title = {title}')
         msg.print(f'     upload = {upload}')
         msg.print(f'     length = {notes_stop}')
+        show_day_readings(df=df, idx=idx)
 
         # download youtube video
         url = get_yt_url(df=df, idx=idx)
