@@ -2,35 +2,10 @@
 # BIY table updates
 # -------------------------------------------------------------------
 
-from pathlib import Path
 import pandas as pd
 import webbrowser
 
 from bible_in_a_year import msg
-from bible_in_a_year.utils import proj_path
-
-
-# -------------------------------------------------------------------
-# PATH utils
-# -------------------------------------------------------------------
-def bible_in_year_path() -> Path:
-    return proj_path().joinpath('bible-in-a-year')
-
-
-def bible_in_year_data_path() -> Path:
-    return proj_path().joinpath('data')
-
-
-def bible_in_year_temp_path() -> Path:
-    return bible_in_year_path().joinpath('yt-temp')
-
-
-def bible_in_year_mp3_path() -> Path:
-    return bible_in_year_path().joinpath('mp3')
-
-
-def bible_in_year_mp4_path() -> Path:
-    return bible_in_year_path().joinpath('mp4')
 
 
 # -------------------------------------------------------------------

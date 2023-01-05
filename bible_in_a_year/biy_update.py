@@ -82,7 +82,7 @@ def cli_update_times(start_day: int, stop_day: int, review: bool):
 
         #order_list = ['first_reading', 'second_reading', 'third_reading', 'prayer', 'notes']
         order_list = get_start_stop_list()
-        start_delta_list = [75, 0, 0, 0, 0]
+        start_delta_list = [75, 1, 1, 1, 1]
         end_delta_list = [300, 300, 30, 30, 60]
         fixed_list = ['prayer', 'notes']
         ord_idx = 0

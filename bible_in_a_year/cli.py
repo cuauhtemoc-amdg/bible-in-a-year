@@ -44,7 +44,18 @@ def update_titles(start, stop):
 @cli.command()
 @click.option('--start', prompt='Start day', type=int)
 @click.option('--stop', prompt='Stop (end) day', type=int)
-def mp3(start, stop):
+def mp3_bible(start, stop):
+
+    msg.info(f'Start Day: : {start}')
+    msg.info(f'Stop Day: : {stop}')
+    cli_mp3(start_day=start,
+            stop_day=stop)
+
+
+@cli.command()
+@click.option('--start', prompt='Start day', type=int)
+@click.option('--stop', prompt='Stop (end) day', type=int)
+def mp3_day(start, stop):
 
     msg.info(f'Start Day: : {start}')
     msg.info(f'Stop Day: : {stop}')

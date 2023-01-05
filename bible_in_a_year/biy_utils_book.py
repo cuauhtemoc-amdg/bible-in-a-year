@@ -65,6 +65,7 @@ def print_book_table(book_days, book_names):
 def get_book_details(df, start_day, stop_day):
     # filter the dates
     df_filt = df[(df['day'] >= start_day) & (df['day'] <= stop_day)]
+
     book_names = set()
     book_days = {}
     for idx in df_filt.index:
@@ -76,16 +77,24 @@ def get_book_details(df, start_day, stop_day):
             bk_start = df[bkl.start_name][idx]
             bk_stop = df[bkl.stop_name][idx]
             day_str = f'{day:03d}'
+            day_str_suffix = ''
             if bk_start < 1 or bk_stop < 1:
-                day_str = f'{day_str}*'
+                day_str_suffix = '*'
+            bk_ch_list = []
             for bkl_idx in range(bkl.bk_cnt):
-                book = bkl.books[bkl_idx].book
+                bk = bkl.books[bkl_idx]
+                book = bk.book
+                bk_ch = bk.chapters
+                day_info_str = day_str
+                if len(bk_ch):
+                    day_info_str += f'(ch:{bk_ch})'
+                day_info_str += day_str_suffix
                 # get book days
                 if book in book_days:
                     book_list = book_days[book]
-                    book_list.append(day_str)
+                    book_list.append(day_info_str)
                 else:
-                    book_list = [day_str]
+                    book_list = [day_info_str]
                 book_days[book] = book_list
                 book_names.add(book)
     return book_days, book_names

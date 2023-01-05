@@ -9,8 +9,8 @@ import pandas as pd
 
 from bible_in_a_year import msg
 from bible_in_a_year.biy_book import BIYBookList
-from bible_in_a_year.biy_utils import bible_in_year_data_path, get_reading_list, get_start_stop_list
-
+from bible_in_a_year.biy_utils import get_reading_list, get_start_stop_list
+from bible_in_a_year.biy_paths import bible_in_year_data_path
 
 biy_xlsx = bible_in_year_data_path().joinpath('bible-in-year-fr-mike.xlsx')
 biy_xlsx_sheet='youtube'

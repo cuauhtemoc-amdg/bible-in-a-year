@@ -3,12 +3,11 @@
 # -------------------------------------------------------------------
 
 import re
-import pandas as pd
 from pathlib import Path
 
 from slugify import slugify
 
-from bible_in_a_year.biy_utils import bible_in_year_mp3_path, bible_in_year_mp4_path
+from bible_in_a_year.biy_paths import biy_mp4_bible_path, biy_mp3_bible_path
 
 
 class BIYBook:
@@ -20,33 +19,31 @@ class BIYBook:
         self.ch1 = ch1
         self.ch2 = ch2
 
-    def __str__(self) -> str:
+    @property
+    def chapters(self) -> str:
         if self.ch2:
-            return f'{self.book} {self.ch1}-{self.ch2}'
+            return f'{self.ch1}-{self.ch2}'
         elif self.ch1:
-            return f'{self.book} {self.ch1}'
+            return f'{self.ch1}'
         else:
-            return f'{self.book}'
+            return f''
+
+    def __str__(self) -> str:
+        return f'{self.book} {self.chapters}'.strip()
 
     def __repr__(self) -> str:
-        day_str = f'DAY[{self.day:03d}]::'
-        if self.ch2:
-            return f'{day_str}::{self.book} {self.ch1}-{self.ch2}'
-        elif self.ch1:
-            return f'{day_str}::{self.book} {self.ch1}'
-        else:
-            return f'{day_str}::{self.book}'
-    
+        day_str = f'DAY[{self.day:03d}]::{self.book} {self.chapters}'.strip()
+
     def mp3_dir(self) -> Path:
         book_slug = slugify(self.book)
-        ret_dir = bible_in_year_mp3_path().joinpath(book_slug)
+        ret_dir = biy_mp3_bible_path().joinpath(book_slug)
         if not ret_dir.exists():
             ret_dir.mkdir(parents=True, exist_ok=True)
         return ret_dir
 
     def mp4_dir(self) -> Path:
         book_slug = slugify(self.book)
-        ret_dir = bible_in_year_mp4_path().joinpath(book_slug)
+        ret_dir = biy_mp4_bible_path().joinpath(book_slug)
         if not ret_dir.exists():
             ret_dir.mkdir(parents=True, exist_ok=True)
         return ret_dir

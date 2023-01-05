@@ -17,7 +17,8 @@ from pytube import YouTube
 
 from bible_in_a_year import msg
 from bible_in_a_year.biy_datafile import load_biy_df, save_biy_df
-from bible_in_a_year.biy_utils import open_yt_at_time, bible_in_year_mp3_path, get_start_stop_list, get_reading_list, get_yt_url, biy_video_ext, bible_in_year_temp_path
+from bible_in_a_year.biy_utils import open_yt_at_time, get_start_stop_list, get_reading_list, get_yt_url, biy_video_ext
+from bible_in_a_year.biy_paths import biy_mp3_path, bible_in_year_temp_path
 from bible_in_a_year.biy_segment import BIYSegment
 
 from moviepy.editor import VideoFileClip

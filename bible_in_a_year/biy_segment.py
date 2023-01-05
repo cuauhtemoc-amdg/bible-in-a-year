@@ -3,7 +3,7 @@ import pandas as pd
 from slugify import slugify
 
 from bible_in_a_year.biy_utils import get_fixed_start_stop_list, has_start_stop, yt_url_at_time, get_yt_url
-from bible_in_a_year.biy_utils import bible_in_year_mp3_path, bible_in_year_mp4_path
+from bible_in_a_year.biy_paths import biy_mp4_path, biy_mp3_path
 
 
 class BIYSegment:
