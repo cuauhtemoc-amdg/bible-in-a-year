@@ -24,11 +24,13 @@ def load_biy_df() -> pd.DataFrame:
     for name in get_start_stop_list():
         start_name = f'{name}_start'
         stop_name = f'{name}_stop'
+        duration_name = f'{name}_duration'
         df[start_name] = df[start_name].astype('Int64')
         df[stop_name] = df[stop_name].astype('Int64')
         df[start_name] = df[start_name].fillna(0)
-        df[stop_name] = df[stop_name].fillna(0)        
-    
+        df[stop_name] = df[stop_name].fillna(0)
+        df[duration_name] = df[stop_name] - df[start_name]
+
     def get_books(book_names: str, day: int, col_name: str):
         bkl = BIYBookList(book_names=book_names,
                           day=day, col_name=col_name)

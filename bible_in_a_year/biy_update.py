@@ -2,15 +2,27 @@
 # BIY table updates
 # -------------------------------------------------------------------
 import pytube as ptb
+import math
+import pandas as pd
 from pytube import YouTube
+from prettytable import PrettyTable, FRAME, HEADER, ALL, NONE
 
 from bible_in_a_year import msg
 from bible_in_a_year.biy_utils import open_yt_at_time, get_start_stop_list
 from bible_in_a_year.biy_datafile import load_biy_df, save_biy_df
 from bible_in_a_year.show import show_day_readings
 
+import datetime
+
+
+def vid_time_convert(time_val:int):
+    tv_int = int(time_val)
+    dt_val_str = str(datetime.timedelta(seconds=tv_int))
+    return f'{dt_val_str} ({time_val})'
+
 
 def prompt_for_val(name, st_label: str, vid_start):
+        msg.print(f'     est {st_label} = {vid_time_convert(vid_start)}')
         retval = msg.prompt_int(f'Enter {st_label.upper()} time', vid_start)
         if retval != vid_start:
             msg.info(f'{name} {st_label} = {retval}')
@@ -26,10 +38,24 @@ def get_vid_start(init_val: int, empty_val: int, st_label: str, name: str) -> in
     return vid_start
 
 
-def update_start_stop(url: str, name: str, label: str,
+def stop_stats(row_lbl:str, stat1, stat2, start_val, rec_tot_time) -> list:
+    if 'std' not in row_lbl.lower():
+        eor_vid_pos = rec_tot_time - stat2
+        eor_dur = eor_vid_pos - start_val
+        return [row_lbl,
+                stat1, vid_time_convert(stat1 + start_val),
+                eor_dur, vid_time_convert(eor_vid_pos)]
+    else:
+        return [row_lbl,
+                stat1, 'N/A',
+                stat2, 'N/A']
+
+
+def update_start_stop(df_timed: pd.DataFrame,
+                      url: str, name: str, label: str,
                       run_time: int, start_val: int, stop_val: int, 
                       delta: int, delta_nxt: int,
-                      review: bool):
+                      review: bool, rec_tot_time: int):
     msg.separator()
     msg.info(f'{name}')
     if label:
@@ -54,6 +80,28 @@ def update_start_stop(url: str, name: str, label: str,
                                   empty_val=(delta_nxt + start_val),
                                   st_label='stop',
                                   name=name)
+        # stop stats
+        stop_table = PrettyTable()
+        stop_table.field_names = ['stat', 'reading', 'reading vid', 'to_eor', 'to_eor vid']
+        stop_table.hrules = ALL
+        stop_table.vrules = ALL
+        stop_table.add_row(
+            stop_stats('mean',
+                       math.ceil(df_timed[f'{name}_duration'].mean()),
+                       math.ceil(df_timed[f'{name}_to_eor'].mean()),
+                       start_val, rec_tot_time))
+        stop_table.add_row(
+            stop_stats('50%',
+                       math.ceil(df_timed[f'{name}_duration'].median()),
+                       math.ceil(df_timed[f'{name}_to_eor'].median()),
+                       start_val, rec_tot_time))
+        stop_table.add_row(
+            stop_stats('std',
+                       math.ceil(df_timed[f'{name}_duration'].std()),
+                       math.ceil(df_timed[f'{name}_to_eor'].std()),
+                       start_val, rec_tot_time))
+        print(stop_table)
+
         open_yt_at_time(url=url, vid_start=vid_start)
         stop_val = prompt_for_val(name, 'stop', vid_start)
     
@@ -69,7 +117,7 @@ def cli_update_times(start_day: int, stop_day: int, review: bool):
     for idx in df_filt.index:
         url = df.day_yt_url[idx]
         title = df.title[idx]
-        notes_stop = df.notes_stop[idx]
+        rec_tot_time = df.notes_stop[idx]
         upload = df.upload[idx]
 
         msg.separator()
@@ -77,12 +125,12 @@ def cli_update_times(start_day: int, stop_day: int, review: bool):
         msg.info(f'DAY {df.day[idx]:03d}: {url}')
         msg.print(f'     title = {title}')
         msg.print(f'     upload = {upload}')
-        msg.print(f'     length = {notes_stop}')
+        msg.print(f'     length = {rec_tot_time}')
         show_day_readings(df=df, idx=idx)
 
         order_list = get_start_stop_list()
-        start_delta_list = [75, 2, 2, 2, 1]
-        end_delta_list = [300, 300, 30, 30, 60]
+        start_delta_list = [69, 2, 2, 2, 1]
+        end_delta_list = [392, 421, 30, 30, 60]
         fixed_list = ['prayer', 'notes']
         ord_idx = 0
         run_time = 0
@@ -105,13 +153,16 @@ def cli_update_times(start_day: int, stop_day: int, review: bool):
                 stop_name = f'{name}_stop'
                 start = df[start_name][idx]
                 stop = df[stop_name][idx]
+                df_timed = df[df[f'{name}_duration'] > 0].copy()
+                df_timed[f'{name}_to_eor'] = df_timed['notes_stop'] - df_timed[f'{name}_stop']
                 delta = start_delta_list[ord_idx]
                 delta_nxt = end_delta_list[ord_idx]
-                start_upd, stop_upd = update_start_stop(url, name, label,
+                start_upd, stop_upd = update_start_stop(df_timed,
+                                                        url, name, label,
                                                         run_time,
                                                         start, stop, 
                                                         delta, delta_nxt,
-                                                        review)
+                                                        review, rec_tot_time)
                 if start != start_upd:
                     msg.info(f'update: {start_name} = {start_upd}')
                     df.at[idx, start_name] = start_upd

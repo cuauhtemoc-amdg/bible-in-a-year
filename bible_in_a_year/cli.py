@@ -22,7 +22,7 @@ def cli():
 @click.option('--review', is_flag=True)
 def update_times(start, stop, review):
 
-    if stop == 0 and start>0:
+    if stop == 0 and start > 0:
         stop = start
     msg.info(f'Start Day: : {start}')
     msg.info(f'Stop Day: : {stop}')
