@@ -29,12 +29,14 @@ def prompt_for_val(name, st_label: str, vid_start):
         return retval
 
 
-def get_vid_start(init_val: int, empty_val: int, st_label: str, name: str) -> int:
+def get_vid_start(run_time: int, init_val: int, empty_val: int, st_label: str, name: str) -> int:
     if init_val > 1:
         vid_start = init_val
     else:
         vid_start = empty_val
-        msg.warn(f'Missing {st_label.upper()} time for "{name}", opening url at delta : {vid_start}')
+        msg.warn(f'Missing {st_label.upper()} time for "{name}"')
+        msg.print(f'   Run Time = {vid_time_convert(run_time)}')
+        msg.print(f'   Opening url at time = {vid_time_convert(vid_start)}')
     return vid_start
 
 
@@ -53,7 +55,7 @@ def stop_stats(row_lbl:str, stat1, stat2, start_val, rec_tot_time) -> list:
 
 def update_start_stop(df_timed: pd.DataFrame,
                       url: str, name: str, label: str,
-                      run_time: int, start_val: int, stop_val: int, 
+                      run_time: int, start_val: int, stop_val: int,
                       delta: int, delta_nxt: int,
                       review: bool, rec_tot_time: int):
     msg.separator()
@@ -65,7 +67,8 @@ def update_start_stop(df_timed: pd.DataFrame,
     if (start_val > 1) and (not review):
         msg.print(f'     start = {start_val}')
     else:
-        vid_start = get_vid_start(init_val=start_val,
+        vid_start = get_vid_start(run_time=run_time,
+                                  init_val=start_val,
                                   empty_val=(delta + run_time),
                                   st_label='start',
                                   name=name)
@@ -76,10 +79,6 @@ def update_start_stop(df_timed: pd.DataFrame,
     if (stop_val > 1) and (not review):
         msg.print(f'     stop = {stop_val}')
     else:
-        vid_start = get_vid_start(init_val=stop_val,
-                                  empty_val=(delta_nxt + start_val),
-                                  st_label='stop',
-                                  name=name)
         # stop stats
         stop_table = PrettyTable()
         stop_table.field_names = ['stat', 'reading', 'reading vid', 'to_eor', 'to_eor vid']
@@ -102,6 +101,11 @@ def update_start_stop(df_timed: pd.DataFrame,
                        start_val, rec_tot_time))
         print(stop_table)
 
+        vid_start = get_vid_start(run_time=run_time,
+                                  init_val=stop_val,
+                                  empty_val=(delta_nxt + start_val),
+                                  st_label='stop',
+                                  name=name)
         open_yt_at_time(url=url, vid_start=vid_start)
         stop_val = prompt_for_val(name, 'stop', vid_start)
     
@@ -164,17 +168,17 @@ def cli_update_times(start_day: int, stop_day: int, review: bool):
                                                         delta, delta_nxt,
                                                         review, rec_tot_time)
                 if start != start_upd:
-                    msg.info(f'update: {start_name} = {start_upd}')
+                    msg.info(f'update: {start_name} = {vid_time_convert(start_upd)}')
                     df.at[idx, start_name] = start_upd
                     updated_row = True
                 if stop != stop_upd:
-                    msg.info(f'update: {stop_name} = {stop_upd}')
+                    msg.info(f'update: {stop_name} = {vid_time_convert(stop_upd)}')
                     df.at[idx, stop_name] = stop_upd
                     run_time = stop_upd
                     updated_row = True
                 else:
                     run_time = stop
-                msg.info(f'run time = {run_time}')
+                msg.info(f'run time = {vid_time_convert(run_time)}')
             else:
                 msg.info(f'No start/stop for {name}')
             
