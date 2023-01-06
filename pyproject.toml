@@ -22,6 +22,8 @@ biy-cli = "bible_in_a_year.cli:cli"
 
 [tool.poetry.group.jupyter.dependencies]
 jupyter = "^1.0.0"
+matplotlib = "^3.6.2"
+seaborn = "^0.12.2"
 
 
 [tool.poetry.group.test.dependencies]
